@@ -15,7 +15,7 @@ use orion::numbers::fixed_point::implementations::impl_16x16::{
 
 use orion::operators::tensor::linalg::matmul::matmul_fp::core::matmul;
 
-/// Calculates the mean of a given tensor.
+/// Calculates the mean of a given 1D tensor.
 fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
 
     let tensor_size = FP16x16Impl::from_unscaled_felt(tensor_data.data.len().into());
@@ -27,7 +27,7 @@ fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
     return mean;
 }
 
-/// Calculates the difference of each element from the mean of the provided tensor.
+/// Calculates the difference of each element from the mean of the provided 1D tensor.
 fn diff_from_mean (tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 
     let mean_value = calculate_mean(tensor_data);
