@@ -27,15 +27,15 @@ fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
     return mean;
 }
 
-/// Calculates the difference of each element from the mean of the provided 1D tensor.
-fn diff_from_mean (tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
+/// Calculates the deviation of each element from the mean of the provided 1D tensor.
+fn deviation_from_mean(tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 
     let mean_value = calculate_mean(tensor_data);
 
     let mut tensor_shape = array::ArrayTrait::new();
     tensor_shape.append(tensor_data.data.len());
 
-    let mut values = array::ArrayTrait::new();
+    let mut deviation_values = array::ArrayTrait::new();
 
     let mut i:u32 = 0;
     loop {
@@ -43,7 +43,7 @@ fn diff_from_mean (tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
             break();
         }
         let distance_from_mean = *tensor_data.data.at(i) - mean_value;
-        values.append(distance_from_mean);
+        deviation_values.append(distance_from_mean);
         i += 1;
         };
 
@@ -59,13 +59,13 @@ fn diff_from_mean (tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 /// Calculates the beta value for linear regression.
 fn compute_beta(x_values: Tensor<FixedType>, y_values: Tensor<FixedType> ) -> FixedType {
 
-    let x_diff = diff_from_mean(x_values);
-    let y_diff = diff_from_mean(y_values);
+    let x_deviation = deviation_from_mean(x_values);
+    let y_deviation = deviation_from_mean(y_values);
 
-    let numerator = x_diff.matmul(@y_diff);
-    let denominator = x_diff.matmul(@x_diff);
+    let x_y_covariance = x_deviation.matmul(@y_deviation);
+    let x_variance = x_deviation.matmul(@x_deviation);
 
-    let beta_value = FP16x16Div::div(*numerator.data.at(0), *denominator.data.at(0));
+    let beta_value = FP16x16Div::div(*x_y_covariance.data.at(0), *x_variance.data.at(0));
 
     return beta_value;
 

@@ -4,7 +4,7 @@ use debug::PrintTrait;
 use array::ArrayTrait;
 use verifiable_linear_regression::generated::X_values::X_values;
 use verifiable_linear_regression::generated::Y_values::Y_values;
-use verifiable_linear_regression::helper_functions::{calculate_mean, diff_from_mean, compute_beta, compute_intercept, predict_y_values, compute_mse, calculate_r_score};
+use verifiable_linear_regression::helper_functions::{calculate_mean, deviation_from_mean, compute_beta, compute_intercept, predict_y_values, compute_mse, calculate_r_score};
 
 
 use orion::operators::tensor::math::cumsum::cumsum_i32::cumsum;
@@ -19,8 +19,7 @@ use orion::numbers::fixed_point::implementations::impl_16x16::{
 
 use orion::operators::tensor::linalg::matmul::matmul_fp::core::matmul;
 
-#[test]
-#[available_gas(99999999999999999)]
+
 fn predict() {
     // Fetching the x and y values
     let y_values = Y_values();
