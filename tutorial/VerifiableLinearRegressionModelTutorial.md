@@ -6,13 +6,10 @@ The following tutorial will be a short guide on how we can utilise the Orion fra
 
 This will enable us to add an extra layer of transparency to our model, ensuring each inference can be verified as weel as all the steps executed during the model’s construction phase.
 
-
-[What is the MNIST dataset?](mnist-classification-with-orion.md#what-is-mnist-dataset)
-
 Content overview: 
-1. [Simple Linear Regression with Python:](verifiable-simple-linear-regression-model.md#simple-linear-regression-with-python)Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
-2. [Transitioning to Cairo:](verifiable-simple-linear-regression-model.md#transitioning-to-cairo) In the subsequent stage, we will create a new scarb project and replicate our model to Cairo which is a language for creating STARK-provable programs.
-3. [Implementing OLS functions using Orion:](verifiable-simple-linear-regression-model.md#implementing-ols-functions-using-orion) To catalyse our development process we will utilise the Orion Framework to construct the OLS functions to build our Verifiable Linear Regression model. 
+1. [Simple Linear Regression with Python:](VerifiableLinearRegressionModelTutorial.md#simple-linear-regression-with-python)Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
+2. [Transitioning to Cairo:](VerifiableLinearRegressionModelTutorial.md#transitioning-to-cairo) In the subsequent stage, we will create a new scarb project and replicate our model to Cairo which is a language for creating STARK-provable programs.
+3. [Implementing OLS functions using Orion:](VerifiableLinearRegressionModelTutorial.md#implementing-ols-functions-using-orion) To catalyse our development process we will utilise the Orion Framework to construct the OLS functions to build our Verifiable Linear Regression model. 
 
 ## Simple Linear Regression with Python
 
