@@ -48,7 +48,7 @@ fn deviation_from_mean(tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
         };
 
     let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-    let distance_from_mean_tensor = TensorTrait::<FixedType>::new(tensor_shape.span(), values.span(), Option::Some(extra));
+    let distance_from_mean_tensor = TensorTrait::<FixedType>::new(tensor_shape.span(), deviation_values.span(), Option::Some(extra));
 
     return distance_from_mean_tensor;
 
