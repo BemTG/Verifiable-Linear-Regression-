@@ -186,7 +186,7 @@ test = "scarb cairo-test -f linear_regression_test"
 ```
 Now let’s generate the files required to begin our transition to Cairo. In our Jupyter Notebook, we will execute the code required to turn our synthetic dataset to fixed point values and represent our X and y values as Fixedpoint Tensors in Orion.
 
-```python=
+```python
 tensor_name =['X_values', 'Y_values']
 
 def generate_cairo_files(data, name):
@@ -229,14 +229,15 @@ The X_values and y_values tensor values will now be generated under `src/generat
 
 In `src/lib.cairo` replace the content with the following code:
 
-```rust=
+```rust
 mod generated;
 mod test;
 mod lin_reg_func;
 ```
 This will tell our compiler to include the separate modules listed above during the compilation of our code. We will be covering each module in detail in the following section, but let’s first review the generated folder files.
 
-```rust=use array::ArrayTrait;
+```rust
+use array::ArrayTrait;
 use orion::operators::tensor::core::{TensorTrait, Tensor, ExtraParams};
 use orion::operators::tensor::implementations::impl_tensor_i32::Tensor_i32;
 use orion::numbers::signed_integer::i32::i32;
@@ -267,7 +268,7 @@ return tensor;
 Since Cairo does not come with built-in signed integers we have to explicitly define it for our X and y values. Luckily, this is already implemented in Orion for us as a struct as shown below:
 
 
-```rust=
+```rust
 // Example of a FixedType.
 struct FixedType {
     mag: u128,
@@ -277,7 +278,7 @@ struct FixedType {
 
 For this tutorial, we will use FixedType numbers  where the magnitude represents the absolute value and the boolean indicates whether the number is negative or positive. To replicate the OLS functions, we will conduct our operations using  FixedType Tensors which are also represented as a structs in Orion.
 
-```rust=
+```rust
 struct Tensor<T> {
     shape: Span<usize>,
     data: Span<T>
@@ -299,7 +300,7 @@ At this stage, we will be reproducing the OLS functions now that we have generat
 
 ### Computing the mean 
 
-```rust=
+```rust
 fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
 
     let tensor_size = FP16x16Impl::from_unscaled_felt(tensor_data.data.len().into());
@@ -315,7 +316,7 @@ The above function takes in a FixedType Tensor and computes its corresponding me
 
 ### Computing the deviation from the mean
 
-```rust=
+```rust
 fn deviation_from_mean(tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 
     let mean_value = calculate_mean(tensor_data);
@@ -354,7 +355,7 @@ $$
 
 
 
-```rust=
+```rust
 
 fn compute_beta(x_values: Tensor<FixedType>, y_values: Tensor<FixedType> ) -> FixedType {
 
@@ -376,7 +377,7 @@ We can now compute the beta value for our linear regression utilising the previo
 
 ### Computing the y-intercept
 
-```rust=
+```rust
 /// Calculates the intercept for linear regression.
 fn compute_intercept(beta_value:FixedType, x_values: Tensor<FixedType>, y_values: Tensor<FixedType>) -> FixedType {
 
@@ -397,7 +398,7 @@ Calculating the y-intercept is fairly simple, we just need to substitute the cal
 
 Now that we have implemented all the necessary functions for the OLS method, we can finally test our linear regression model. We begin by creating a new separate test file named `test.cairo` and import all the necessary Orion libraries including our `X_values` and `y_values` found in the generated folder. We also import all the OLS functions from `lin_reg_func.cairo` file as we will be relying upon them to construct the regression model.
 
-```rust=
+```rust
 use core::array::SpanTrait;
 use traits::Into;
 use debug::PrintTrait;
@@ -458,7 +459,7 @@ fn linear_regression_test() {
 
 Finally, we can execute the test file by running `scarb cairo-test -f linear_regression_test`
 
-```shell=
+```shell
 scarb cairo-test -f linear_regression_test 
 testing verifiable_linear_regression ...
 running 1 tests
