@@ -58,8 +58,9 @@ plt.xlabel('X values')
 plt.ylabel('y values')
 ```
 
-<figure><img src="https://i.ibb.co/S5yL1vv/x-y-values.png
-" alt=""><figcaption><p></p></figcaption></figure>
+
+
+<figure><img src="x-y-values.png" alt=""><figcaption></figcaption></figure>
 
 
 
@@ -133,8 +134,9 @@ print(f"Calculated intercept: {intercept}")
 >> Calculated beta: 2.0315325245038856
 >> Calculated intercept: 3.916899671448352
 ```
-<figure><img src="https://i.ibb.co/ygw65md/result.png
-" alt=""><figcaption><p></p></figcaption></figure>
+
+<figure><img src="linear-regression-plot.png" alt=""><figcaption></figcaption></figure>
+
 
 Looking at the above plot we can see we have successfully implemented our Linear regression model and captured the “line of best fit” using the OLS method.
 
