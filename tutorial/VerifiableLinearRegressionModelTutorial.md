@@ -85,7 +85,7 @@ y & \text{= specific y value} \\
 $$
  
 
-The formula’s numerator quantifies the covariance of X and y, revealing their joint variability. Think of it as an expression to measure how both variables move together. The denominator, on the other hand, calculates the variance of X, which gauges the distribution of X values around its mean.
+The formula’s numerator quantifies the covariance of X and y, revealing their joint variability. Think of it as an expression to measure how both variables move together. Conversely, the denominator calculates the variance of X, which gauges the distribution of X values around its mean.
 
 By dividing the covariance by the variance of X, we essentially measure the average change in y for a unit change in X. This allows us to capture the strength and direction of the linear relationship between X and y variables. A positive beta value suggests that as X increases, y also tends to increase, and vice versa for negative values. The magnitude of the beta value indicates the sensitivity of y to changes, with respect to changes in X values.
 
@@ -144,7 +144,8 @@ Looking at the above plot we can see we have successfully implemented our Linear
 ### Model accuracy
 
 To assess the efficacy of our regression model, we compute the **mse** and **r_squared_score** values, which yield an R-squared score of 0.83, indicating a robust predictive performance for the model.
-```python=
+
+```python
 y_pred = beta * X + intercept
 
 mse = np.mean((y - y_pred)**2)
