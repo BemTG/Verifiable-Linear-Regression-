@@ -132,6 +132,7 @@ print(f"Calculated beta: {beta}")
 print(f"Calculated intercept: {intercept}")
 >> Calculated beta: 2.0315325245038856
 >> Calculated intercept: 3.916899671448352
+
 ```
 <figure><img src="https://i.ibb.co/ygw65md/result.png
 " alt=""><figcaption><p></p></figcaption></figure>
