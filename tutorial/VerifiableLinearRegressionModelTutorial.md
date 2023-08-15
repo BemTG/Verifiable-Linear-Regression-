@@ -1,8 +1,5 @@
 # Verifiable Simple Linear Regression Model
 
-
-
-
 Orion is an open-source framework explicitly designed for the development of Provable Machine Learning models. It achieves this by providing a new ONNX runtime in Cairo to run STARK-provable ML programs.
 
 The following tutorial will be a short guide on how we can utilise the Orion framework to implement our very first fully Verifiable Linear Regression Model in Cairo.
@@ -10,15 +7,14 @@ The following tutorial will be a short guide on how we can utilise the Orion fra
 This will enable us to add an extra layer of transparency to our model, ensuring each inference can be verified as weel as all the steps executed during the model’s construction phase.
 
 
-Overview: 
+[What is the MNIST dataset?](mnist-classification-with-orion.md#what-is-mnist-dataset)
 
-1. [Simple Linear Regression with OLS: ](verifiable-simple-linear-regression-model.md#simple-linear-regression-with-ols)Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
-2. [Transitioning to Cairo: ](verifiable-simple-linear-regression-model.md#Transitioning-to-cairo) In the subsequent stage, we will create a new scarb project and replicate our model to Cairo which is a language for creating STARK-provable programs.
-3. [Implementing OLS functions using Orion: ](verifiable-simple-linear-regression-model.md#Implementing-OLS-functions-using-Orion) To catalyse our development process we will utilise the Orion Framework to construct the OLS functions to build our Verifiable Linear Regression model. 
+Content overview: 
+1. [Simple Linear Regression with Python:](verifiable-simple-linear-regression-model.md#simple-linear-regression-with-python)Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
+2. [Transitioning to Cairo:](verifiable-simple-linear-regression-model.md#transitioning-to-cairo) In the subsequent stage, we will create a new scarb project and replicate our model to Cairo which is a language for creating STARK-provable programs.
+3. [Implementing OLS functions using Orion:](verifiable-simple-linear-regression-model.md#implementing-ols-functions-using-orion) To catalyse our development process we will utilise the Orion Framework to construct the OLS functions to build our Verifiable Linear Regression model. 
 
-
-
-## Simple Linear Regression in Python
+## Simple Linear Regression with Python
 
 A Regression model is a foundational technique used to determine the relationship between independent variables (predictors) and dependent variables (outcome). This relationship is typically represented by a straight line and is often termed the “line of best fit”. By mapping how variations in one variable **X** may influence changes in another variable **y**, we can make  highly accurate predictions on new unseen data points. The mathematical representation of this linear relationship is given by the equation:
 
@@ -162,12 +158,12 @@ print("R-squared (R^2):", r_squared)
 
 ```
 
-## Converting our model to Cairo
+## Transitioning to Cairo
 
-At this stage, we will replicate the full linear regression model in Cairo from scratch to build our verifiable Regression model. This is also to provide an opportunity to get familiar with Orion’s built-in functions and operators along the process.
+Now that we have a good understanding of the OLS functions used, we will replicate the full linear regression model in Cairo to turn it to a fully verifiable model. Since we will be rebuilding the model from scratch, this will serve as a good opportunity to get familiar with Orion’s built-in functions and operators making the transition to Cairo seamless.
 
 
-## Creating a new scarb project
+### Creating a new scarb project
 Scarb is the Cairo package manager specifically created to streamline our Cairo and Starknet development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), downloading and building external libraries to accelerate our development with Orion.You can find all information about Scarb and Cairo installation [here](../../framework/get-started.md#installations). 
 
 To create a new Scarb project, open your terminal and run:
@@ -193,6 +189,7 @@ orion = { git = "https://github.com/gizatechxyz/orion.git", branch = "einsum-imp
 test = "scarb cairo-test -f linear_regression_test"
 
 ```
+### Gerating the dataset in Cairo
 Now let’s generate the files required to begin our transition to Cairo. In our Jupyter Notebook, we will execute the code required to turn our synthetic dataset to fixed point values and represent our X and y values as Fixedpoint Tensors in Orion.
 
 ```python
@@ -359,7 +356,7 @@ fn deviation_from_mean(tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 The following deviation_from_mean function calculates the deviation from the mean for each element of a given tensor. 
 We initially calculate the tensor's mean value and store it under the variable mean_value. We then create a for loop to iterate over each element in the tensor values and calculate the deviation from the mean which we will append the result to `deviation_values` array. Finally, we create a new tensor named distance_from_mean_tensor by passing the deviation_values array and the tensor shape.
 
-### Computing beta 
+### Computing the gradient value 
 
 The OLS gradient (beta) formula:
 
@@ -435,23 +432,26 @@ use orion::operators::tensor::linalg::matmul::matmul_fp::core::matmul;
 #[test]
 #[available_gas(99999999999999999)]
 fn linear_regression_test() {
-    // Fetching the x and y values
+    //Data Retrieval
     let y_values = Y_values();
     let x_values = X_values();
 
+    //Beta Calculation
     let beta_value = compute_beta(x_values,y_values );
     // beta_value.print();    // calculated gradient value
-    
+
+    //Intercept Calculation
     let intercept_value =  compute_intercept(beta_value, x_values, y_values );
     // intercept_value.print();   // calculated intercept value
 
+    //Prediction Phase
     let y_pred = predict_y_values(beta_value, x_values, y_values );
 
+    //Evaluation
     let mse = compute_mse(y_values, y_pred);
     // mse.print();       // mean squared error ouput
-
     let r_score = calculate_r_score(y_values, y_pred);
-    // r_score.print();   // accuracy of model around 0.8303375244140625 
+    // r_score.print();   // accuracy of model 0.8303375244140625 
 
     assert(beta_value.mag > 0, 'x & y not positively correlated');
     assert(r_score.mag > 0, 'R-Squared needs to be above 0');
