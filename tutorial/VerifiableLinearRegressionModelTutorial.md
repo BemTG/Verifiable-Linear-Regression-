@@ -56,6 +56,7 @@ y = 2 * X + 5 + noise # y=2x+5 + noise
 plt.scatter(X,y)
 plt.xlabel('X values')
 plt.ylabel('y values')
+
 ```
 
 <figure><img src="https://i.ibb.co/S5yL1vv/x-y-values.png
@@ -97,6 +98,7 @@ denominator = sum((X - X.mean())**2)
 beta = numerator / denominator
 print('The slope of regression line:', beta)
 >> The slope of regression line: 2.0315325245038856
+
 ```
 
 ### Computing the y-intercept 
@@ -154,6 +156,7 @@ print("Mean Squared Error (MSE):", mse)
 print("R-squared (R^2):", r_squared)
 >>Mean Squared Error (MSE): 81.78873049706822
 >>R-squared (R^2): 0.8303237877258618
+
 ```
 
 ## Converting our model to Cairo
@@ -170,6 +173,7 @@ To create a new Scarb project, open your terminal and run:
 
 ```sh
 scarb new verifiable_linear_regression
+
 ```
 
 A new project folder will be created for you and make sure to replace the content in Scarb.toml file with the following code:
@@ -184,6 +188,7 @@ orion = { git = "https://github.com/gizatechxyz/orion.git", branch = "einsum-imp
 
 [scripts]
 test = "scarb cairo-test -f linear_regression_test"
+
 ```
 Now let’s generate the files required to begin our transition to Cairo. In our Jupyter Notebook, we will execute the code required to turn our synthetic dataset to fixed point values and represent our X and y values as Fixedpoint Tensors in Orion.
 
@@ -225,6 +230,7 @@ def generate_cairo_files(data, name):
             
 generate_cairo_files(X, 'X_values')
 generate_cairo_files(y, 'Y_values')
+
 ```
 The X_values and y_values tensor values will now be generated under `src/generated` directory.
 
@@ -275,6 +281,7 @@ struct FixedType {
     mag: u128,
     sign: bool
 }
+
 ```
 
 For this tutorial, we will use FixedType numbers  where the magnitude represents the absolute value and the boolean indicates whether the number is negative or positive. To replicate the OLS functions, we will conduct our operations using  FixedType Tensors which are also represented as a structs in Orion.
@@ -289,12 +296,14 @@ struct Tensor<T> {
 struct ExtraParams {
     fixed_point: Option<FixedImpl>
 }
+
 ```
  A `Tensor` in Orion takes a shape, a span array of the data and an extra parameter. For our tutorial, the ExtraParams specifies that the Tensor is associated with using fp16x16 format.  In a 16x16 fixed-point format, there are 16 bits dedicated to the integer part of the number and 16 bits for the fractional part of the number. This format allows us to work with a wide range of values and a high degree of precision for conducting the OLS Tensor operations.
+ 
 ```rust=
 let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-```
 
+```
 ## Implementing OLS functions using Orion
 
 At this stage, we will be reproducing the OLS functions now that we have generated our X and Y Fixedpoint Tensors. We will begin by creating a separate file for our linear regression functions file named `lin_reg_func.cairo` to host all of our linear regression functions.
@@ -312,6 +321,7 @@ fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
 
     return mean;
 }
+
 ```
 The above function takes in a FixedType Tensor and computes its corresponding mean value. We break the steps down by first calculating the cumulative sum of the tensor values using the `cumsum` built-in orion operator. We then divide the result by the length of the tensor size and return the output as a Fixedtype number.
 
@@ -341,10 +351,10 @@ fn deviation_from_mean(tensor_data: Tensor<FixedType> ) -> Tensor<FixedType> {
 
     return distance_from_mean_tensor;
 }
+
 ```
 The following deviation_from_mean function calculates the deviation from the mean for each element of a given tensor. 
 We initially calculate the tensor's mean value and store it under the variable mean_value. We then create a for loop to iterate over each element in the tensor values and calculate the deviation from the mean which we will append the result to `deviation_values` array. Finally, we create a new tensor named distance_from_mean_tensor by passing the deviation_values array and the tensor shape.
-
 
 ### Computing beta 
 
@@ -370,10 +380,9 @@ fn compute_beta(x_values: Tensor<FixedType>, y_values: Tensor<FixedType> ) -> Fi
 
     return beta_value;
 }
+
 ```
 We can now compute the beta value for our linear regression utilising the previous  deviation_from_mean function. We first calculate both the deviation of x values and y values from the mean and store them in separate variables as tensors. To calculate the covariance, we use the built-in Orion `matmul` operator to multiply x_deviation by y_deviation tensors. Similarly, we compute the X variance by multiplying x_deviation tensor by itself. Finally, we divide the `x_y_covariance` by the `x_variance` to get an approximate gradient value for our regression model.
-
-
 
 
 ### Computing the y-intercept
@@ -446,6 +455,7 @@ fn linear_regression_test() {
     assert(r_score.mag < 62259, 'R-Squared has to be below 65536'); // 65536 represents ONE in fp16x16.
     assert(r_score.mag > 32768, 'Accuracy below 50% ');
 }
+
 ```
 
  Our model will get tested under the `linear_regression_test()` function which will follow the following steps:
